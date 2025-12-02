@@ -1,3 +1,7 @@
+// URL del Apps Script de opiniones (WEB APP /exec)
+const OPINIONES_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbziv6ucg8r_jQhosrgNknh5AgsHdVtGdqj7i4yPkFqO3QcBnKJF9-qxA-jAVi3Crr-hig/exec";
+
 // MENU MOBILE
 const navToggle = document.getElementById("navToggle");
 const nav = document.getElementById("nav");
@@ -85,36 +89,135 @@ if ("IntersectionObserver" in window && animatedElements.length) {
   animatedElements.forEach((el) => el.classList.add("is-visible"));
 }
 
-// FORMULARIO DE OPINIONES (sin backend, solo en pantalla)
+// FORMULARIO DE OPINIONES con backend (Google Sheets)
 const formOpinion = document.getElementById("formOpinion");
 const opinionesList = document.getElementById("opinionesList");
 
+// Cambia a true solo cuando tú quieras ver el botón "Eliminar"
+window.MODO_ADMIN = false;
+// Debe ser la MISMA clave que pusiste en ADMIN_PASS del Apps Script
+window.ADMIN_PASS = "ermilo2025Admin";
+
+function crearOpinionElemento(opinion) {
+  const article = document.createElement("article");
+  article.className = "opinion-card";
+  article.dataset.idOpinion = opinion.id;
+
+  const p = document.createElement("p");
+  p.textContent = `“${opinion.texto}”`;
+
+  const span = document.createElement("span");
+  span.className = "opinion-name";
+  span.textContent = `— ${opinion.nombre}`;
+
+  article.appendChild(p);
+  article.appendChild(span);
+
+  // Botón borrar solo si estás en modo admin
+  if (window.MODO_ADMIN) {
+    const btnDelete = document.createElement("button");
+    btnDelete.type = "button";
+    btnDelete.textContent = "Eliminar";
+    btnDelete.className = "btn btn-delete-opinion";
+    btnDelete.addEventListener("click", () => {
+      if (confirm("¿Eliminar este mensaje?")) {
+        eliminarOpinion(opinion.id, article);
+      }
+    });
+    article.appendChild(btnDelete);
+  }
+
+  return article;
+}
+
+async function cargarOpiniones() {
+  if (!opinionesList) return;
+  try {
+    const res = await fetch(OPINIONES_SCRIPT_URL + "?action=list");
+    const data = await res.json();
+    if (!data.ok) {
+      console.error("Error al cargar opiniones:", data.error);
+      return;
+    }
+
+    opinionesList.innerHTML = "";
+    // Que las más nuevas se vean arriba
+    data.opiniones.reverse().forEach((op) => {
+      const el = crearOpinionElemento(op);
+      opinionesList.appendChild(el);
+    });
+  } catch (err) {
+    console.error("Error de red al cargar opiniones:", err);
+  }
+}
+
+async function enviarOpinion(nombre, texto) {
+  try {
+    const res = await fetch(OPINIONES_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre, texto }),
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert("No se pudo guardar tu opinión. Intenta más tarde.");
+      console.error("Error al guardar opinión:", data.error);
+      return;
+    }
+
+    // Crear la opinión con el id que viene del backend
+    const opinion = { id: data.id, nombre, texto };
+    const el = crearOpinionElemento(opinion);
+    // Insertar arriba
+    opinionesList.prepend(el);
+  } catch (err) {
+    alert("Error de conexión al enviar tu opinión.");
+    console.error("Error de red al enviar opinión:", err);
+  }
+}
+
+async function eliminarOpinion(id, articleEl) {
+  try {
+    const params = new URLSearchParams({
+      action: "delete",
+      id,
+      pass: window.ADMIN_PASS || "",
+    });
+
+    const res = await fetch(OPINIONES_SCRIPT_URL + "?" + params.toString());
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert("No se pudo eliminar. Revisa la clave de admin.");
+      console.error("Error al eliminar:", data.error);
+      return;
+    }
+
+    articleEl.remove();
+  } catch (err) {
+    alert("Error de conexión al eliminar.");
+    console.error("Error de red al eliminar opinión:", err);
+  }
+}
+
 if (formOpinion && opinionesList) {
-  formOpinion.addEventListener("submit", (e) => {
+  // Cargar las opiniones al abrir la página
+  cargarOpiniones();
+
+  formOpinion.addEventListener("submit", async (e) => {
     e.preventDefault();
     const nombre = document.getElementById("nombreOpinion").value.trim();
     const texto = document.getElementById("textoOpinion").value.trim();
 
     if (!nombre || !texto) return;
 
-    const article = document.createElement("article");
-    article.className = "opinion-card";
-
-    const p = document.createElement("p");
-    p.textContent = `“${texto}”`;
-
-    const span = document.createElement("span");
-    span.className = "opinion-name";
-    span.textContent = `— ${nombre}`;
-
-    article.appendChild(p);
-    article.appendChild(span);
-
-    opinionesList.prepend(article); // la nueva opinión aparece hasta arriba
-
+    await enviarOpinion(nombre, texto);
     formOpinion.reset();
   });
 }
+
 // ===============================
 // CARRUSEL DE LA GALERÍA (4 CUADROS, 5 IMÁGENES CADA UNO, DESLIZANDO A LADO)
 // ===============================

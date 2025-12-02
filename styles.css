@@ -785,3 +785,17 @@ img {
   margin: 0 auto 15px auto;
   display: block;
 }
+
+.btn-delete-opinion {
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  background: #ffdddd;
+  color: #b00020;
+}
+.btn-delete-opinion:hover {
+  background: #ffcccc;
+}
