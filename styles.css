@@ -462,13 +462,6 @@ img {
   position: relative;
 }
 
-.gallery-item img {
-  width: 100%;
-  height: 190px;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
 .gallery-item::after {
   content: "";
   position: absolute;
@@ -476,6 +469,30 @@ img {
   background: linear-gradient(to top, rgba(15, 23, 42, 0.35), transparent 45%);
   opacity: 0;
   transition: opacity 0.3s ease;
+}
+
+/* Contenedor del carrusel dentro de cada cuadro */
+.gallery-slider {
+  width: 100%;
+  height: 190px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Track que se desliza horizontalmente */
+.gallery-slider-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s ease;
+}
+
+/* Cada imagen ocupa exactamente el ancho del cuadro */
+.gallery-slider-track img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .gallery-item:hover img {
@@ -486,6 +503,13 @@ img {
   opacity: 1;
 }
 
+.gallery-item img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  transition: transform 0.5s ease, opacity 0.4s ease;
+}
+
 .gallery-item figcaption {
   position: absolute;
   left: 0.7rem;
@@ -493,6 +517,7 @@ img {
   color: #f9fafb;
   font-size: 0.82rem;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  transition: opacity 0.4s ease;
 }
 
 .gallery-note {

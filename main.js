@@ -115,3 +115,84 @@ if (formOpinion && opinionesList) {
     formOpinion.reset();
   });
 }
+// ===============================
+// CARRUSEL DE LA GALERÍA (4 CUADROS, 5 IMÁGENES CADA UNO, DESLIZANDO A LADO)
+// ===============================
+const galleryItems = document.querySelectorAll("#galleryGrid .gallery-item");
+
+if (galleryItems.length) {
+  const galleryData = [
+    // Cuadro 1
+    [
+      { src: "img/imagen3.jpeg", caption: "Festival del Día de las Madres" },
+      { src: "img/imagen4.jpeg", caption: "Festival escolar" },
+      { src: "img/1.jpeg", caption: "Actividades en el aula" },
+      { src: "img/2.jpeg", caption: "Juegos en el patio" },
+      { src: "img/imagen3.jpeg", caption: "Momentos en familia" },
+    ],
+    // Cuadro 2
+    [
+      { src: "img/imagen4.jpeg", caption: "Honores a la bandera" },
+      { src: "img/1.jpeg", caption: "Trabajos de los niños" },
+      { src: "img/2.jpeg", caption: "Recreo y convivencia" },
+      { src: "img/imagen3.jpeg", caption: "Festival escolar" },
+      { src: "img/imagen4.jpeg", caption: "Actos cívicos" },
+    ],
+    // Cuadro 3
+    [
+      { src: "img/1.jpeg", caption: "Proyectos en el aula" },
+      { src: "img/2.jpeg", caption: "Juegos cooperativos" },
+      { src: "img/imagen3.jpeg", caption: "Actividades artísticas" },
+      { src: "img/imagen4.jpeg", caption: "Acto cívico" },
+      { src: "img/1.jpeg", caption: "Trabajos en equipo" },
+    ],
+    // Cuadro 4
+    [
+      { src: "img/2.jpeg", caption: "Juegos en el patio" },
+      { src: "img/imagen3.jpeg", caption: "Festival del Día de las Madres" },
+      { src: "img/imagen4.jpeg", caption: "Desfile escolar" },
+      { src: "img/1.jpeg", caption: "Proyectos y maquetas" },
+      { src: "img/2.jpeg", caption: "Convivencia escolar" },
+    ],
+  ];
+
+  galleryItems.forEach((item, index) => {
+    const slides = galleryData[index];
+    if (!slides) return;
+
+    const oldImg = item.querySelector("img");
+    const caption = item.querySelector("figcaption");
+    if (!oldImg || !caption) return;
+
+    // Creamos el contenedor del carrusel
+    const slider = document.createElement("div");
+    slider.className = "gallery-slider";
+
+    const track = document.createElement("div");
+    track.className = "gallery-slider-track";
+
+    // Agregamos las 5 imágenes al track
+    slides.forEach((slide) => {
+      const img = document.createElement("img");
+      img.src = slide.src;
+      img.alt = slide.caption;
+      track.appendChild(img);
+    });
+
+    slider.appendChild(track);
+
+    // Reemplazamos la imagen original por el slider, sin mover el figcaption
+    item.insertBefore(slider, oldImg);
+    oldImg.remove();
+
+    let current = 0;
+    caption.textContent = slides[0].caption;
+
+    setInterval(() => {
+      current = (current + 1) % slides.length;
+      // Deslizamos el track
+      track.style.transform = `translateX(-${current * 100}%)`;
+      caption.textContent = slides[current].caption;
+    }, 4000); // cada 4 segundos cambia de foto
+  });
+}
