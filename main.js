@@ -1,6 +1,6 @@
 // URL del Apps Script de opiniones (WEB APP /exec)
 const OPINIONES_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbziv6ucg8r_jQhosrgNknh5AgsHdVtGdqj7i4yPkFqO3QcBnKJF9-qxA-jAVi3Crr-hig/exec";
+  "https://script.google.com/macros/s/AKfycbyH1HXBz1Rsw04jKA5xijy_FUWvY4ZXkTTzKCQVpHuTYW4Fm4XQrMqKMMOG2f0NheNyhQ/exec";
 
 // MENU MOBILE
 const navToggle = document.getElementById("navToggle");
