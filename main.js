@@ -1,6 +1,7 @@
 // URL del Apps Script de opiniones (WEB APP /exec)
+// URL del Apps Script de opiniones (WEB APP /exec)
 const OPINIONES_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbyH1HXBz1Rsw04jKA5xijy_FUWvY4ZXkTTzKCQVpHuTYW4Fm4XQrMqKMMOG2f0NheNyhQ/exec";
+  "https://script.google.com/macros/s/LO-QUE-TE-DÉ-GOOGLE/exec";
 
 // MENU MOBILE
 const navToggle = document.getElementById("navToggle");
@@ -155,7 +156,8 @@ async function enviarOpinion(nombre, texto) {
   try {
     const res = await fetch(OPINIONES_SCRIPT_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      // text/plain evita problemas de CORS con Apps Script
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ nombre, texto }),
     });
 
