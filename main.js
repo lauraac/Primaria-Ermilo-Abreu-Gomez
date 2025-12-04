@@ -156,12 +156,12 @@ async function enviarOpinion(nombre, texto) {
   try {
     const res = await fetch(OPINIONES_SCRIPT_URL, {
       method: "POST",
-      // text/plain evita problemas de CORS con Apps Script
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ nombre, texto }),
     });
 
     const data = await res.json();
+    console.log("Respuesta backend:", data);
 
     if (!data.ok) {
       alert("No se pudo guardar tu opinión. Intenta más tarde.");
@@ -169,11 +169,8 @@ async function enviarOpinion(nombre, texto) {
       return;
     }
 
-    // Crear la opinión con el id que viene del backend
-    const opinion = { id: data.id, nombre, texto };
-    const el = crearOpinionElemento(opinion);
-    // Insertar arriba
-    opinionesList.prepend(el);
+    // En lugar de agregarla a mano, recargamos TODA la lista
+    await cargarOpiniones();
   } catch (err) {
     alert("Error de conexión al enviar tu opinión.");
     console.error("Error de red al enviar opinión:", err);
@@ -208,6 +205,8 @@ if (formOpinion && opinionesList) {
   // Cargar las opiniones al abrir la página
   cargarOpiniones();
 
+  const submitBtn = formOpinion.querySelector('button[type="submit"]');
+
   formOpinion.addEventListener("submit", async (e) => {
     e.preventDefault();
     const nombre = document.getElementById("nombreOpinion").value.trim();
@@ -215,8 +214,16 @@ if (formOpinion && opinionesList) {
 
     if (!nombre || !texto) return;
 
+    // Desactivar botón para que no lo piquen mil veces
+    if (submitBtn) submitBtn.disabled = true;
+
     await enviarOpinion(nombre, texto);
     formOpinion.reset();
+
+    // Reactivar botón después de 1 segundo
+    setTimeout(() => {
+      if (submitBtn) submitBtn.disabled = false;
+    }, 1000);
   });
 }
 
