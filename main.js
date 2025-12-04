@@ -1,7 +1,7 @@
 // URL del Apps Script de opiniones (WEB APP /exec)
 // URL del Apps Script de opiniones (WEB APP /exec)
 const OPINIONES_SCRIPT_URL =
-  "https://script.google.com/macros/s/LO-QUE-TE-DÉ-GOOGLE/exec";
+  "https://script.google.com/macros/s/AKfycbzbLSQVBJ5m2v_5T-hgJMwNRT3Ap4Je_VtztsVsFVm45trwzrjRy8UhV85tiyd9KFM7ow/exec";
 
 // MENU MOBILE
 const navToggle = document.getElementById("navToggle");
